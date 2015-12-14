@@ -1,5 +1,6 @@
 # Sweaterify
 Turn your image as ugly sweater!
+[see demo](http://kosamari.github.io/sweaterify/)
 
 ## How to run locally (Mac)
  - Download this repo
