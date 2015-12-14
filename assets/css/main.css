@@ -18,7 +18,13 @@
   border:2px solid black;
   width:100px;
 }
-
+#fill{
+  background-color: #c9c9c9;
+  font-size: 14px;
+  padding:5px;
+  border:2px solid black;
+  cursor: pointer;
+}
 #download{
   background-color: gray;
   padding:10px;

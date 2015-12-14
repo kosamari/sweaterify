@@ -49,6 +49,40 @@ right.addEventListener('click', function(e) {
   redrawBody();
 });
 
+
+/*Background fill*/
+var fill = document.getElementById('fill');
+fill.addEventListener('click', function(e){
+  var newImgWidth = wGuage + offsetX;
+  var newImgHeight = hGuage + offsetY;
+  var newOneBitImage = [];
+  for(var i=0;i<newImgHeight;i++){
+    if(i<offsetY){
+      for(var j=0;j<newImgWidth;j++){
+        newOneBitImage.push(1);
+      }
+    }else{
+      if(0<=offsetX){
+        for(var k=0;k<offsetX;k++){
+          newOneBitImage.push(1);
+        }
+        newOneBitImage = newOneBitImage.concat(oneBitImg.splice(0,imgWidth));
+      }else{
+        newOneBitImage = newOneBitImage.concat(oneBitImg.splice(0,imgWidth));
+        for(var l=0;l<offsetX;l++){
+          newOneBitImage.push(1);
+        }
+      }
+    }
+  }
+  imgWidth = newImgWidth;
+  imgHeight = newImgHeight;
+  offsetX = 0;
+  offsetY = 0;
+  oneBitImg = newOneBitImage;
+  redrawBody();
+});
+
 function setCol1(col){
   color1 = '#' + col;
   redrawAll();
@@ -63,7 +97,7 @@ function main(){
   imgHeight = hGuage * (img.height/img.width);
   offsetX = 0;
   offsetY = 0;
-  var download = document.getElementById('download')
+  var download = document.getElementById('download');
   download.style.backgroundColor='orange';
 
   var canvas = document.getElementById('original');
@@ -87,7 +121,6 @@ function download(link, canvasId, filename){
 }
 /* Redraw functions */
 function redrawAll(){
-  console.log(color2)
   drawParts();
   drawSts();
 }
@@ -103,10 +136,10 @@ function dither(imageData, ditherMatrix){
     var pixels = new Array(arr.length/4);
     var i;
     for(i=0;i<pixels.length;i++){
-      pixels[i] = [arr[i*4], arr[(i*4)+1], arr[(i*4)+2]]
+      pixels[i] = [arr[i*4], arr[(i*4)+1], arr[(i*4)+2]];
     }
     for(i=0;i<hGuage;i++){
-      map.push(pixels.splice(0,wGuage))
+      map.push(pixels.splice(0,wGuage));
     }
     return map;
   }
@@ -122,15 +155,15 @@ function dither(imageData, ditherMatrix){
   var ditheredMap = [];
   var i,j;
   for(i=0; i<image.length; i++){
-    var hindex = i % 4
-    var row = []
+    var hindex = i % 4;
+    var row = [];
     for(j=0;j<image[i].length; j++){
-      var windex = j % 4
-      var a = (matrix[hindex][windex]*Math.ceil(matrix.length*matrix[0].length))+8
+      var windex = j % 4;
+      var a = (matrix[hindex][windex]*Math.ceil(matrix.length*matrix[0].length))+8;
       ditheredMap.push(a < Math.max.apply(null,image[i][j]) ? 0 : 1);
     }
   }
-  return ditheredMap
+  return ditheredMap;
 }
 
 
