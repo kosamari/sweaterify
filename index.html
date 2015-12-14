@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head lang='en'>
+    <meta charset='UTF-8'>
+    <title>Sweaterify</title>
+
+    <link rel='stylesheet' type='text/css' href='assets/css/main.css'/>
+    <script src="assets/js/jscolor.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="menu">
+        <h1>Sweaterify</h1>
+        <input type="file" name="file" id="file" class="inputfile" />
+        <label for="file">Choose an Image</label><br><br>
+        <canvas id="original"></canvas><br><br>
+        Color 1: <input class="jscolor color-pick" onchange="setCol1(this.jscolor)" value="FCFBE3"><br>
+        Color 2: <input class="jscolor color-pick" onchange="setCol2(this.jscolor)" value="D42426">
+        <br>
+        <br>
+        Position:
+        <table>
+          <tbody>
+            <tr>
+              <td></td>
+              <td><button id="up">↑</button></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><button id="left">←</button></td>
+              <td></td>
+              <td><button id="right">→</button></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><button id="down">↓</button></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <a id="download">Download as image</a>
+      </div>
+      <div id="sweater">
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
+    <script src="assets/js/main.js" type="text/javascript"></script>
+  </body>
+</html>

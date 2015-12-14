@@ -1,0 +1,51 @@
+*{
+  font-family: sans-serif
+}
+#container{
+  width:980px;
+  margin:10px;
+}
+#menu{
+  width:200px;
+  float: left;
+  line-height: 1.5em;
+}
+#sweater{
+  width:780px;
+  float:right;
+}
+.color-pick{
+  border:2px solid black;
+  width:100px;
+}
+
+#download{
+  background-color: gray;
+  padding:10px;
+  border:2px solid black;
+  cursor: pointer;
+}
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  background-color: orange;
+  display: inline-block;
+  padding: 7px;
+  border:2px solid black;
+
+}
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: #FFB831;
+}
+table button{
+  font-size: 18px;
+  background-color:#c9c9c9;
+  border:2px solid black;
+}
