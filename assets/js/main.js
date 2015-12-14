@@ -51,10 +51,11 @@ right.addEventListener('click', function(e) {
 
 
 /*Background fill*/
+// kind of ugly but does the job!
 var fill = document.getElementById('fill');
 fill.addEventListener('click', function(e){
-  var newImgWidth = wGuage + offsetX;
-  var newImgHeight = hGuage + offsetY;
+  var newImgWidth = imgWidth < wGuage ? wGuage + Math.abs(offsetX): imgWidth + Math.abs(offsetX);
+  var newImgHeight = imgHeight < hGuage ? hGuage+ Math.abs(offsetY): imgHeight + Math.abs(offsetY);
   var newOneBitImage = [];
   for(var i=0;i<newImgHeight;i++){
     if(i<offsetY){
@@ -69,7 +70,7 @@ fill.addEventListener('click', function(e){
         newOneBitImage = newOneBitImage.concat(oneBitImg.splice(0,imgWidth));
       }else{
         newOneBitImage = newOneBitImage.concat(oneBitImg.splice(0,imgWidth));
-        for(var l=0;l<offsetX;l++){
+        for(var l=0;l<Math.abs(offsetX);l++){
           newOneBitImage.push(1);
         }
       }
@@ -77,8 +78,8 @@ fill.addEventListener('click', function(e){
   }
   imgWidth = newImgWidth;
   imgHeight = newImgHeight;
-  offsetX = 0;
-  offsetY = 0;
+  offsetX = offsetX < 0 ? offsetX : 0;
+  offsetY = offsetY < 0 ? offsetY : 0;
   oneBitImg = newOneBitImage;
   redrawBody();
 });
