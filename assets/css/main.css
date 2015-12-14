@@ -1,5 +1,5 @@
 *{
-  font-family: sans-serif
+  font-family: sans-serif;
 }
 #container{
   width:980px;
@@ -48,4 +48,8 @@ table button{
   font-size: 18px;
   background-color:#c9c9c9;
   border:2px solid black;
+}
+
+a{
+  text-decoration: none;
 }
