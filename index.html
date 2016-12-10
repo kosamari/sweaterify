@@ -13,43 +13,39 @@
         <h1>Sweaterify</h1>
         <input type="file" name="file" id="file" class="inputfile" />
         <label for="file">Choose an Image</label><br><br>
-        <canvas id="original"></canvas><br><br>
-        Color 1: <input class="jscolor color-pick" onchange="setCol1(this.jscolor)" value="FCFBE3"><br>
-        Color 2: <input class="jscolor color-pick" onchange="setCol2(this.jscolor)" value="D42426">
-        <br>
-        <br>
-        Position:
-        <table>
-          <tbody>
-            <tr>
-              <td></td>
-              <td><button id="up">↑</button></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><button id="left">←</button></td>
-              <td></td>
-              <td><button id="right">→</button></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><button id="down">↓</button></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-        <br>
-        Body background:<br>
-        <button id="fill">Fill background</button>
-        <br>
-        <br>
-
+        <canvas id="canvas-guide"></canvas><br><br>
+        <div id="color-menu">
+          <div class="color-menu-item">
+            <small>parts</small>
+            <input type="radio" name="parts" value="0">
+            <input type="radio" name="parts" value="3">
+            <input type="radio" name="parts" value="1">
+            <input type="radio" name="parts" value="2">
+          </div>
+          <div class="color-menu-item">
+            <small>fill</small>
+            <input type="radio" name="fill" value="0">
+            <input type="radio" name="fill" value="3">
+            <input type="radio" name="fill" value="1">
+            <input type="radio" name="fill" value="2">
+          </div>
+          <div class="color-menu-item">
+            <small>color</small>
+            <label><input id="color0" class="jscolor color-pick"></label>
+            <label><input id="color3" class="jscolor color-pick"></label>
+            <label><input id="color1" class="jscolor color-pick"></label>
+            <label><input id="color2" class="jscolor color-pick"></label>
+          </div>
+        </div>
+        <br><br>
         <a id="download">Download as image</a>
       </div>
       <div id="sweater">
         <canvas id="canvas"></canvas>
       </div>
     </div>
+    <a id="download-link" hidden></a>
+    <script src="assets/js/grafi.js" type="text/javascript"></script>
     <script src="assets/js/main.js" type="text/javascript"></script>
   </body>
 </html>
