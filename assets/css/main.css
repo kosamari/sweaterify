@@ -111,7 +111,9 @@ a{
 #colorsize {
   margin-left:10px;
 }
-
+#canvas-guide-title {
+  visibility: hidden;
+}
 .tabs {
   margin-bottom:10px;
   display: flex;

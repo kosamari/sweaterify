@@ -61,6 +61,7 @@ var $canvas = document.getElementById('canvas')
 var $guideCanvas = document.getElementById('canvas-guide')
 var $a = document.getElementById('download-link')
 var $download = document.getElementById('download')
+var $guideTitle = document.getElementById('canvas-guide-title')
 var $guageSlider = document.getElementById('guage')
 var $brightnessSlider = document.getElementById('brightness')
 var $colorSizeSelector = document.getElementById('colorsize')
@@ -129,6 +130,7 @@ function start () {
   bctx.globalAlpha = 0
   bctx.clearRect(0, 0, baseImage.width, baseImage.height)
   gctx.clearRect(0, 0, $guideCanvas.width, $guideCanvas.height)
+
   if (img.width > img.height) {
     imgWidth = sts
     imgHeight = sts * (img.height/img.width)
@@ -143,16 +145,18 @@ function start () {
   bctx.putImageData(grayscale(makeImageData(img, imgWidth, imgHeight)), x, y)
   if (!rectPos){
     rectPos = {}
-    rectPos.x = [x, x + sts]
-    rectPos.y = [y, y + rows]
+    rectPos.x = [(baseImage.width / 2) - (sts / 2), (baseImage.width / 2) - (sts / 2) + sts]
+    rectPos.y = [(baseImage.height / 2) - (rows / 2), (baseImage.height / 2) - (rows / 2) + rows]
   }
   gctx.drawImage(img, ($guideCanvas.width / 2) - (imgWidth * scale / 2), ($guideCanvas.height / 2) - (imgHeight * scale / 2), imgWidth * scale, imgHeight * scale)
   gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
   knitSweaterBody(processImage())
-  download.style.backgroundColor = 'orange'
+  $guideTitle.style.visibility = 'visible'
+  $download.style.backgroundColor = 'orange'
 }
 
 function setSize (stsSize, previouse) {
+  stsSize = Number(stsSize) // make sure it's number
   if (previouse) {
     var diff = stsSize/previouse
     rectPos.x = [rectPos.x[0] * diff, rectPos.x[1] * diff]
@@ -451,8 +455,10 @@ $guideCanvas.addEventListener('mousemove', function (e) {
 }, false)
 
 $guideCanvas.addEventListener('mouseup', function (e) {
-  mousePos = undefined
-  knitSweaterBody(processImage())
+  if (mousePos) {
+    mousePos = undefined
+    knitSweaterBody(processImage())
+  }
 }, false)
 
 /**
