@@ -20,17 +20,32 @@
 
         <div class="tabs">
           <div class="tab">
-            <input type="radio" id="tab-dither" name="mode" value="dither" checked>
-            <label for="tab-dither">Dithering</label>
+            <input type="radio" id="tab-repeat" name="mode" value="repeat" checked>
+            <label for="tab-repeat">Holiday</label>
+          </div>
+          <div class="tab">
+            <input type="radio" id="tab-dither" name="mode" value="dither" >
+            <label for="tab-dither">Halftone</label>
           </div>
           <div class="tab">
             <input type="radio" id="tab-posterize" name="mode" value="posterize">
-            <label for="tab-posterize">Posterize</label>
+            <label for="tab-posterize">Poster</label>
           </div>
-          <div class="tab">
-            <input type="radio" id="tab-repeat" name="mode" value="repeat">
-            <label for="tab-repeat">Repeat</label>
-          </div>
+        </div>
+        <div id="repeat-menu">
+          <div>Number of Repeat:</div>
+          <select id="repeatsize">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
         </div>
         <div id="color-num-menu">
           <div>Number of Colors:</div>
@@ -40,17 +55,21 @@
             <option value="4" selected>4</option>
           </select>
         </div>
+        <div id="invert-menu">
+          <label for="invert">Invert image color: </label>
+          <input type="checkbox" id="invert" value="1">
+        </div>
         <div class="slider-menu">
-          <div>Yarn Size: </div>
+          <div>Yarn Type: </div>
           <input id="guage" type="range" min="80" max="200" step="20" value="140"/>
           <div class="slider-guide">
-            <div>Bulkey</div>
-            <div>SuperFine</div>
+            <div>bulkey</div>
+            <div>super fine</div>
           </div>
         </div>
         <div class="slider-menu">
-          <div>Image Brightness: </div>
-          <input id="brightness" type="range" min="-127" max="127" value="0"/>
+          <div>Image Adjust: </div>
+          <input id="brightness" type="range" min="-254" max="254" value="0" step="10"/>
           <div class="slider-guide">
             <div>dark</div>
             <div>bright</div>
@@ -110,14 +129,20 @@
           </div>
         </div>
         <br><br>
-        <a id="download">Download as image</a>
       </div>
       <div id="sweater">
-        <canvas id="canvas"></canvas>
+        <div>
+          <canvas id="canvas"></canvas>
+        </div>
+        <div>
+          <button id="download" class="download-btn" disabled="true">Download as sweater image</button>
+          <button id="download-wallpaper" class="download-btn"  disabled="true">Download as wallpaper</button>
+        </div>
       </div>
     </div>
     <a id="download-link" hidden></a>
-    <script src="assets/js/grafi.js" type="text/javascript"></script>
+    <img src="assets/patterntop.png" alt="" id="pattern-img-top" hidden>
+    <img src="assets/patternbottom.png" alt="" id="pattern-img-bottom" hidden>
     <script src="assets/js/main.js" type="text/javascript"></script>
   </body>
 </html>

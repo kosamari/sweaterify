@@ -41,16 +41,20 @@ var mousePos
 // color picker state
 var colors = {
   fill: 0,
-  parts: 3,
-  list: ['#FCFBE3', '#C44680', '#50966D', '#d42426']
+  parts: 0,
+  list: ['#C60204', '#DB3737', '#F27268', '#FCFCFC']
 }
 
 // image process mode
 var mode = {
   current: null,
   brightness: 0,
+  invert: false,
+  colorNum: 2,
+  repeatNum: 5,
   dither: dither,
-  posterize: posterize
+  posterize: posterize,
+  repeat: posterize
 }
 
 // elements used in this app
@@ -61,10 +65,13 @@ var $canvas = document.getElementById('canvas')
 var $guideCanvas = document.getElementById('canvas-guide')
 var $a = document.getElementById('download-link')
 var $download = document.getElementById('download')
+var $downloadWallpaper = document.getElementById('download-wallpaper')
 var $guideTitle = document.getElementById('canvas-guide-title')
 var $guageSlider = document.getElementById('guage')
 var $brightnessSlider = document.getElementById('brightness')
 var $colorSizeSelector = document.getElementById('colorsize')
+var $repeatSizeSelector = document.getElementById('repeatsize')
+var $repeatMenu = document.getElementById('repeat-menu')
 var $color0 = document.getElementById('color0')
 var $color1 = document.getElementById('color1')
 var $color2 = document.getElementById('color2')
@@ -73,6 +80,12 @@ var $colorNumMenu = document.getElementById('color-num-menu')
 var $fillRadio = document.getElementsByName('fill')
 var $partsRadio = document.getElementsByName('parts')
 var $modeRadio = document.getElementsByName('mode')
+var $invertCheck = document.getElementById('invert')
+var $tabDither = document.getElementById('tab-dither')
+var $tabPosterize = document.getElementById('tab-posterize')
+var $tabRepeat = document.getElementById('tab-repeat')
+var $patternImgBottom = document.getElementById('pattern-img-bottom')
+var $patternImgTop = document.getElementById('pattern-img-top')
 var baseImage = document.createElement('canvas')
 
 // canvas contexts
@@ -85,24 +98,29 @@ var bctx = baseImage.getContext('2d') // in-memory canvas for base image
           SET UP
 ★────────────────────────★
 */
-$modeRadio.forEach(function (el) {
-  if (el.checked) {
-    mode.current = el.value
-  }
-  if (el.value === 'posterize') {
-    $colorNumMenu.style.display = 'flex'
-  } else {
-    $colorNumMenu.style.display = 'none'
-  }
-})
 mode.brightness = Number($brightnessSlider.value)
 mode.colorNum = Number($colorSizeSelector.options[$colorSizeSelector.selectedIndex].value)
+mode.repeatNum = Number($repeatSizeSelector.options[$repeatSizeSelector.selectedIndex].value)
+$modeRadio.forEach(function ($el) {
+  if ($el.checked) {
+    mode.current = $el.value
+    if ($el.value === 'posterize') {
+      $colorNumMenu.style.display = 'flex'
+    }else if ($el.value === 'repeat') {
+      $repeatMenu.style.display = 'flex'
+      $downloadWallpaper.style.display = 'inline-block'
+      mode.colorNum = 2
+    }
+  }
+})
 setSize($guageSlider.value)
 $color0.value = colors.list[0]
 $color1.value = colors.list[1]
 $color2.value = colors.list[2]
 $color3.value = colors.list[3]
-
+if ($invertCheck.checked) {
+  mode.invert = true
+}
 $fillRadio.forEach(function (el) {
   if (el.value == colors.fill) {
     el.checked = true
@@ -126,10 +144,51 @@ $fileInput.addEventListener('change', function (e) {
 }, false)
 
 // SWEATER DRAWING
+function startRepeat () {
+  mode.repeatNum = Number($repeatSizeSelector.options[$repeatSizeSelector.selectedIndex].value)
+  imgWidth = sts / mode.repeatNum
+  imgHeight = imgWidth * (img.height/img.width)
+  // var x = (0.5 + (baseImage.width / 2) - (imgWidth / 2)) | 0
+  var y = (0.5 + (baseImage.height / 2) - (imgHeight / 2)) | 0
+  var x = (baseImage.width / 2) - (sts / 2)
+  // add christmas decolations
+  for (var i = 0; i < (baseImage.width / $patternImgTop.width); i++) {
+    bctx.drawImage($patternImgTop, i*$patternImgTop.width, y-$patternImgTop.height )
+    bctx.drawImage($patternImgBottom, i*$patternImgBottom.width, y+imgHeight )
+  }
+  var baseImageData = grayscale(makeImageData(img, imgWidth, imgHeight))
+  if (mode.invert) {
+    baseImageData = invert(baseImageData)
+  }
+  var extra = (0.5 + (baseImage.width / 2) / imgWidth) | 0
+  for (var i = -extra; i < mode.repeatNum + extra; i++) {
+    bctx.putImageData(baseImageData, x + i*imgWidth, y)
+  }
+  gctx.drawImage(baseImage, 0, 0, $guideCanvas.width,  $guideCanvas.height)
+  gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
+  knitSweaterBody(processImage())
+
+}
 function start () {
   bctx.globalAlpha = 0
   bctx.clearRect(0, 0, baseImage.width, baseImage.height)
+  bctx.globalAlpha = 1
   gctx.clearRect(0, 0, $guideCanvas.width, $guideCanvas.height)
+  $guideTitle.style.visibility = 'visible'
+  $download.style.backgroundColor = 'orange'
+  $downloadWallpaper.style.backgroundColor = 'orange'
+  $download.disabled = false
+  $downloadWallpaper.disabled = false
+
+  if (!rectPos){
+    rectPos = {}
+    rectPos.x = [(baseImage.width / 2) - (sts / 2), (baseImage.width / 2) - (sts / 2) + sts]
+    rectPos.y = [(baseImage.height / 2) - (rows / 2), (baseImage.height / 2) - (rows / 2) + rows]
+  }
+
+  if (mode.current === 'repeat') {
+    return startRepeat()
+  }
 
   if (img.width > img.height) {
     imgWidth = sts
@@ -141,18 +200,15 @@ function start () {
   var x = (0.5 + (baseImage.width / 2) - (imgWidth / 2)) | 0
   var y = (0.5 + (baseImage.height / 2) - (imgHeight / 2)) | 0
 
-  bctx.globalAlpha = 1
-  bctx.putImageData(grayscale(makeImageData(img, imgWidth, imgHeight)), x, y)
-  if (!rectPos){
-    rectPos = {}
-    rectPos.x = [(baseImage.width / 2) - (sts / 2), (baseImage.width / 2) - (sts / 2) + sts]
-    rectPos.y = [(baseImage.height / 2) - (rows / 2), (baseImage.height / 2) - (rows / 2) + rows]
+  var baseImageData = grayscale(makeImageData(img, imgWidth, imgHeight))
+  if (mode.invert) {
+    baseImageData = invert(baseImageData)
   }
+  bctx.putImageData(baseImageData, x, y)
+
   gctx.drawImage(img, ($guideCanvas.width / 2) - (imgWidth * scale / 2), ($guideCanvas.height / 2) - (imgHeight * scale / 2), imgWidth * scale, imgHeight * scale)
   gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
   knitSweaterBody(processImage())
-  $guideTitle.style.visibility = 'visible'
-  $download.style.backgroundColor = 'orange'
 }
 
 function setSize (stsSize, previouse) {
@@ -172,8 +228,8 @@ function setSize (stsSize, previouse) {
   $canvas.style.width = bodyWidth + 180 + 'px'
   $guideCanvas.width = 200
   $guideCanvas.height = 200 * (rows/sts)
-  baseImage.width = sts * 1.5
-  baseImage.height = rows * 1.5
+  baseImage.width = sts * 2
+  baseImage.height = rows * 2
   scale = $guideCanvas.width / baseImage.width
   reverseScale = baseImage.width / $guideCanvas.width
 }
@@ -193,14 +249,17 @@ function setColor(num, color){
   }
 }
 
+function setRepeat(){
+  mode.colorNum = 2
+  // mode.repeatNum = Number($repeatSizeSelector.options[$repeatSizeSelector.selectedIndex].value)
+}
+
 function processImage () {
   if (img.src) {
     currentImageData = mode[mode.current](
-                        // grayscale(
-                          grafi.brightness(
-                            bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows), 
-                            {level: mode.brightness}
-                          // )
+                        brightness(
+                          bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows),
+                          {level: mode.brightness}
                         ),
                         mode.colorNum)
     return currentImageData
@@ -348,39 +407,79 @@ function drawClip() {
   ctx.quadraticCurveTo(635 * sf, 140 * sf, 640 * sf, 30 * sf) //left curve
   ctx.lineTo(530 * sf, 10 * sf)
   ctx.quadraticCurveTo(390 * sf, 120 * sf, 250 * sf, 10 * sf) //neck curve
-  ctx.fillStyle = '#fff'
+  ctx.fillStyle = colors.list[colors.fill]
   ctx.fill()
   ctx.clip()
 }
 
 /**
 ★────────────────────────★
-     SELCTOR EVENTS
+    MODE SELCTOR EVENT
 ★────────────────────────★
 */
-$modeRadio.forEach(function ($el) {
-  $el.addEventListener('change', function () {
-    mode.current = this.value
-    if (this.value === 'posterize') {
-      $colorNumMenu.style.display = 'flex'
-    } else {
-      $colorNumMenu.style.display = 'none'
-    }
+// Dither
+$tabDither.addEventListener('change', function () {
+  mode.current = this.value
+  $colorNumMenu.style.display = 'none'
+  $repeatMenu.style.display = 'none'
+  $downloadWallpaper.style.display = 'none'
+  if (currentImageData) {
     drawParts()
     start()
-  })
+  }
 })
 
-$colorSizeSelector.addEventListener('change', function () {
-  mode.colorNum = Number(this.options[this.selectedIndex].value)
-  drawParts()
-  start()
+// Posterize
+$tabPosterize.addEventListener('change', function () {
+  mode.current = this.value
+  mode.colorNum = Number($colorSizeSelector.options[$colorSizeSelector.selectedIndex].value)
+  $colorNumMenu.style.display = 'flex'
+  $repeatMenu.style.display = 'none'
+  $downloadWallpaper.style.display = 'none'
+
+  if (currentImageData) {
+    drawParts()
+    start()
+  }
 })
+
+// Repeat
+$tabRepeat.addEventListener('change', function () {
+  mode.current = this.value
+  $colorNumMenu.style.display = 'none'
+  $repeatMenu.style.display = 'flex'
+  $downloadWallpaper.style.display = 'inline-block'
+
+  setRepeat()
+  if (currentImageData) {
+    drawParts()
+    start()
+  }
+})
+
 /**
 ★────────────────────────★
-      SLIDER EVENTS
+   CONTROL MENU EVENTS
 ★────────────────────────★
 */
+$invertCheck.addEventListener('change', function () {
+  if(this.checked) {
+    mode.invert = true
+  } else {
+    mode.invert = false
+  }
+  start()
+})
+$colorSizeSelector.addEventListener('change', function () {
+  mode.colorNum = Number(this.options[this.selectedIndex].value)
+  start()
+})
+
+$repeatSizeSelector.addEventListener('change', function () {
+  mode.repeatNum = Number(this.options[this.selectedIndex].value)
+  start()
+})
+
 $brightnessSlider.addEventListener('change', function () {
   mode.brightness = Number(this.value)
   start()
@@ -449,7 +548,11 @@ $guideCanvas.addEventListener('mousemove', function (e) {
     rectPos.x = [rectPos.x[0] + xdiff, rectPos.x[1] + xdiff]
     rectPos.y = [rectPos.y[0] + ydiff, rectPos.y[1] + ydiff]
     gctx.clearRect(0, 0, $guideCanvas.width, $guideCanvas.height)
-    gctx.drawImage(img, ($guideCanvas.width/2) - (imgWidth*scale/2), ($guideCanvas.height/2) - (imgHeight*scale/2), imgWidth*scale, imgHeight*scale)
+    if (mode.current === 'repeat'){
+      gctx.drawImage(baseImage, 0, 0, $guideCanvas.width, $guideCanvas.height)
+    } else {
+      gctx.drawImage(img, ($guideCanvas.width/2) - (imgWidth*scale/2), ($guideCanvas.height/2) - (imgHeight*scale/2), imgWidth*scale, imgHeight*scale)
+    }
     gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
   }
 }, false)
@@ -463,10 +566,10 @@ $guideCanvas.addEventListener('mouseup', function (e) {
 
 /**
 ★────────────────────────★
-  DOWNLOAD BUTTON ACTION
+  DOWNLOAD BUTTON EVENT
 ★────────────────────────★
 */
-$download.addEventListener('click', function() {
+$download.addEventListener('click', function () {
   $canvas.toBlob(function (blob) {
     // Check if image file was made previously & remove
     if (imageFile !== null) {
@@ -478,6 +581,25 @@ $download.addEventListener('click', function() {
     $a.click()
   }, 'image/png')
 }, false)
+
+$downloadWallpaper.addEventListener('click', function () {
+  var canvas = document.createElement('canvas')
+  canvas.width = 10
+  canvas.height = 10
+  var ctx = canvas.getContext('2d')
+  // do some drawing on to canvas
+
+  canvas.toBlob(function (blob) {
+    // Check if image file was made previously & remove
+    if (imageFile !== null) {
+      window.URL.revokeObjectURL(imageFile)
+    }
+    imageFile = window.URL.createObjectURL(blob)
+    $a.download = 'sweaterify-wallpaper.png'
+    $a.href = imageFile
+    $a.click()
+  }, 'image/png')
+})
 
 /**
 ★────────────────────────★
@@ -584,6 +706,34 @@ function grayscale (imgData, option) {
     imgData.data[index + 1] = grayscaled
     imgData.data[index + 2] = grayscaled
     imgData.data[index + 3] = imgData.data[index + 3]
+  }
+  return imgData
+}
+
+function brightness (imgData, option) {
+  // check options object
+  option = option || {}
+  option.level = option.level || 0
+
+  var pixelSize = imgData.width * imgData.height
+
+  for (var pixel = 0; pixel < pixelSize; pixel++) {
+    var index = pixel * 4
+    imgData.data[index] = imgData.data[index] + option.level
+    imgData.data[index + 1] = imgData.data[index + 1] + option.level
+    imgData.data[index + 2] = imgData.data[index + 2] + option.level
+    imgData.data[index + 3] = imgData.data[index + 3]
+  }
+
+  return imgData
+}
+
+function invert (imgData) {
+  for (var i = 0; i < imgData.data.length; i++) {
+    if ((i + 1) % 4 === 0) {
+      continue
+    }
+    imgData.data[i] = 255 - imgData.data[i]
   }
   return imgData
 }

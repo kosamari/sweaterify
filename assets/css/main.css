@@ -1,46 +1,33 @@
 *{
   font-family: sans-serif;
+  background-color: #E6F2FF;
 }
 #container{
-  width:1080px;
+  min-width:1080px;
   margin:10px;
+  display: flex;
+  flex-direction: row;
 }
 #menu{
-  width:300px;
-  float: left;
   line-height: 1.5em;
 }
 #sweater{
   width:780px;
-  float:right;
-  position: relative
-}
-#sweater-parts{
-  position: absolute;
-  top:0;
-  left:0;
-}
-#sweater-body{
-  position: absolute;
-  top:10px;
-  left:90px;
+  padding-top:50px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 .color-pick{
   border:2px solid black;
   width:100px;
 }
-#fill{
-  background-color: #c9c9c9;
-  font-size: 14px;
-  padding:5px;
-  border:2px solid black;
-  cursor: pointer;
-}
-#download{
-  background-color: gray;
+.download-btn{
   padding:10px;
   border:2px solid black;
-  cursor: pointer;
+}
+#download-wallpaper {
+  display: none;
 }
 .inputfile {
   width: 0.1px;
@@ -61,21 +48,16 @@
 .inputfile + label:hover {
     background-color: #FFB831;
 }
-table button{
-  font-size: 18px;
-  background-color:#c9c9c9;
-  border:2px solid black;
-}
 
 a{
   text-decoration: none;
 }
+
 #color-menu {
   display: flex;
   flex-direction: row;
-  margin:0px 5%;
-  // justify-content: space-between;
 }
+
 .color-menu-item {
   display: flex;
   flex-direction: column;
@@ -105,14 +87,34 @@ a{
   color:gray;
 }
 #color-num-menu {
+  padding-top:10px;
+  display: none;
+  flex-drection: row;
+}
+#repeat-menu {
+  padding-top:10px;
+  display: none;
+  flex-drection: row;
+}
+#invert-menu {
   display: flex;
   flex-drection: row;
+  align-items:center;
+}
+#invert {
+  margin-left:10px;
 }
 #colorsize {
   margin-left:10px;
 }
+#repeatsize {
+  margin-left: 10px;
+}
 #canvas-guide-title {
   visibility: hidden;
+}
+#canvas-guide {
+  cursor: default;
 }
 .tabs {
   margin-bottom:10px;
