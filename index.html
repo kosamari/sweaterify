@@ -14,27 +14,96 @@
         <input type="file" name="file" id="file" class="inputfile" />
         <label for="file">Choose an Image</label><br><br>
         <canvas id="canvas-guide"></canvas><br><br>
+
+        <div class="tabs">
+          <div class="tab">
+            <input type="radio" id="tab-dither" name="mode" value="dither" checked>
+            <label for="tab-dither">Dithering</label>
+          </div>
+          <div class="tab">
+            <input type="radio" id="tab-posterize" name="mode" value="posterize">
+            <label for="tab-posterize">Posterize</label>
+          </div>
+          <div class="tab">
+            <input type="radio" id="tab-repeat" name="mode" value="repeat">
+            <label for="tab-repeat">Repeat</label>
+          </div>
+        </div>
+        <div id="color-num-menu">
+          <div>Number of Colors:</div>
+          <select id="colorsize">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+          </select>
+        </div>
+        <div class="slider-menu">
+          <div>Yarn Size: </div>
+          <input id="guage" type="range" min="80" max="200" step="20" value="140"/>
+          <div class="slider-guide">
+            <div>Bulkey</div>
+            <div>SuperFine</div>
+          </div>
+        </div>
+        <div class="slider-menu">
+          <div>Image Brightness: </div>
+          <input id="brightness" type="range" min="-127" max="127" value="0"/>
+          <div class="slider-guide">
+            <div>dark</div>
+            <div>bright</div>
+          </div>
+        </div>
         <div id="color-menu">
           <div class="color-menu-item">
-            <small>parts</small>
-            <input type="radio" name="parts" value="0">
-            <input type="radio" name="parts" value="3">
-            <input type="radio" name="parts" value="1">
-            <input type="radio" name="parts" value="2">
+            <div class="color-item">
+              <small>arm&neck</small>
+            </div>
+            <div class="color-item">
+              <input type="radio" name="parts" value="0">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="parts" value="3">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="parts" value="1">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="parts" value="2">
+            </div>
           </div>
           <div class="color-menu-item">
-            <small>fill</small>
-            <input type="radio" name="fill" value="0">
-            <input type="radio" name="fill" value="3">
-            <input type="radio" name="fill" value="1">
-            <input type="radio" name="fill" value="2">
+            <div class="color-item">
+              <small>background</small>
+            </div>
+            <div class="color-item">
+              <input type="radio" name="fill" value="0">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="fill" value="3">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="fill" value="1">
+            </div>
+            <div class="color-item">
+              <input type="radio" name="fill" value="2">
+            </div>
           </div>
           <div class="color-menu-item">
-            <small>color</small>
-            <label><input id="color0" class="jscolor color-pick"></label>
-            <label><input id="color3" class="jscolor color-pick"></label>
-            <label><input id="color1" class="jscolor color-pick"></label>
-            <label><input id="color2" class="jscolor color-pick"></label>
+            <div class="color-item">
+              <small>color</small>
+            </div>
+            <div class="color-item">
+              <input id="color0" class="jscolor color-pick">
+            </div>
+            <div class="color-item">
+              <input id="color3" class="jscolor color-pick">
+            </div>
+            <div class="color-item">
+              <input id="color1" class="jscolor color-pick">
+            </div>
+            <div class="color-item">
+              <input id="color2" class="jscolor color-pick">
+            </div>
           </div>
         </div>
         <br><br>

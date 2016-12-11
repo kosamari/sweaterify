@@ -3,17 +3,18 @@ var sf = window.devicePixelRatio
 // size of the sweater body part
 var bodyWidth = 600
 var bodyHeight = 660
+var aspectratio = bodyHeight / bodyWidth
 
 // how many stitches to show on the body
-var sts = 200
-var rows = 220
+var sts
+var rows
 
 // size of each stitches (width & height)
-var sWidth = (bodyWidth/sts) * sf
-var sHeight = (bodyHeight/rows) * sf
+var sWidth
+var sHeight
 
 // how far v of the stitch drops
-var dip = sWidth/2
+var dip
 
 // size padding for drawing stitches
 var leftArmWidth = 90 * sf
@@ -34,14 +35,22 @@ var scale
 var reverseScale
 
 // guide canvas positions
-var rectPos = {x:[], y:[]}
-var mousePos = undefined
+var rectPos
+var mousePos
 
 // color picker state
 var colors = {
   fill: 0,
   parts: 3,
   list: ['#FCFBE3', '#C44680', '#50966D', '#d42426']
+}
+
+// image process mode
+var mode = {
+  current: null,
+  brightness: 0,
+  dither: dither,
+  posterize: posterize
 }
 
 // elements used in this app
@@ -52,12 +61,17 @@ var $canvas = document.getElementById('canvas')
 var $guideCanvas = document.getElementById('canvas-guide')
 var $a = document.getElementById('download-link')
 var $download = document.getElementById('download')
+var $guageSlider = document.getElementById('guage')
+var $brightnessSlider = document.getElementById('brightness')
+var $colorSizeSelector = document.getElementById('colorsize')
 var $color0 = document.getElementById('color0')
 var $color1 = document.getElementById('color1')
 var $color2 = document.getElementById('color2')
 var $color3 = document.getElementById('color3')
+var $colorNumMenu = document.getElementById('color-num-menu')
 var $fillRadio = document.getElementsByName('fill')
 var $partsRadio = document.getElementsByName('parts')
+var $modeRadio = document.getElementsByName('mode')
 var baseImage = document.createElement('canvas')
 
 // canvas contexts
@@ -70,10 +84,24 @@ var bctx = baseImage.getContext('2d') // in-memory canvas for base image
           SET UP
 ★────────────────────────★
 */
+$modeRadio.forEach(function (el) {
+  if (el.checked) {
+    mode.current = el.value
+  }
+  if (el.value === 'posterize') {
+    $colorNumMenu.style.display = 'flex'
+  } else {
+    $colorNumMenu.style.display = 'none'
+  }
+})
+mode.brightness = Number($brightnessSlider.value)
+mode.colorNum = Number($colorSizeSelector.options[$colorSizeSelector.selectedIndex].value)
+setSize($guageSlider.value)
 $color0.value = colors.list[0]
 $color1.value = colors.list[1]
 $color2.value = colors.list[2]
 $color3.value = colors.list[3]
+
 $fillRadio.forEach(function (el) {
   if (el.value == colors.fill) {
     el.checked = true
@@ -84,20 +112,11 @@ $partsRadio.forEach(function (el) {
     el.checked = true
   }
 })
-
-$canvas.width = (sts * sWidth)+ (180 * sf)
-$canvas.height = (rows * sHeight)+ (30 * sf)
-$canvas.style.width = bodyWidth + 180 + 'px'
-$guideCanvas.width = 300
-$guideCanvas.height = 300 * (rows/sts)
-baseImage.width = sts * 3
-baseImage.height = rows * 3
-scale = $guideCanvas.width / baseImage.width
-reverseScale = baseImage.width / $guideCanvas.width
 drawParts()
 
 $fileInput.addEventListener('change', function (e) {
   download.style.backgroundColor = 'gray'
+  rectPos = undefined
   reader.readAsDataURL(e.target.files[0])
   reader.onload = function() {
     img.src = reader.result
@@ -121,17 +140,38 @@ function start () {
   var y = (0.5 + (baseImage.height / 2) - (imgHeight / 2)) | 0
 
   bctx.globalAlpha = 1
-  bctx.fill = 'rgba(255, 255, 255, 1)'
-  bctx.fillRect(x, y, imgWidth, imgHeight)
   bctx.putImageData(grayscale(makeImageData(img, imgWidth, imgHeight)), x, y)
-
-  rectPos.x = [x, x + sts]
-  rectPos.y = [y, y + rows]
+  if (!rectPos){
+    rectPos = {}
+    rectPos.x = [x, x + sts]
+    rectPos.y = [y, y + rows]
+  }
   gctx.drawImage(img, ($guideCanvas.width / 2) - (imgWidth * scale / 2), ($guideCanvas.height / 2) - (imgHeight * scale / 2), imgWidth * scale, imgHeight * scale)
   gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
-  currentImageData = dither(bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows))
-  knitSweaterBody(currentImageData)
+  knitSweaterBody(processImage())
   download.style.backgroundColor = 'orange'
+}
+
+function setSize (stsSize, previouse) {
+  if (previouse) {
+    var diff = stsSize/previouse
+    rectPos.x = [rectPos.x[0] * diff, rectPos.x[1] * diff]
+    rectPos.y = [rectPos.y[0] * diff, rectPos.y[1] * diff]
+  }
+  sts = stsSize
+  rows = sts * aspectratio
+  sWidth = (bodyWidth/sts) * sf
+  sHeight = (bodyHeight/rows) * sf
+  dip = sWidth/2
+  $canvas.width = (sts * sWidth)+ (180 * sf)
+  $canvas.height = (rows * sHeight)+ (30 * sf)
+  $canvas.style.width = bodyWidth + 180 + 'px'
+  $guideCanvas.width = 200
+  $guideCanvas.height = 200 * (rows/sts)
+  baseImage.width = sts * 1.5
+  baseImage.height = rows * 1.5
+  scale = $guideCanvas.width / baseImage.width
+  reverseScale = baseImage.width / $guideCanvas.width
 }
 
 // COLOR PICKER
@@ -151,7 +191,14 @@ function setColor(num, color){
 
 function processImage () {
   if (img.src) {
-    currentImageData = dither(bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows))
+    currentImageData = mode[mode.current](
+                        // grayscale(
+                          grafi.brightness(
+                            bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows), 
+                            {level: mode.brightness}
+                          // )
+                        ),
+                        mode.colorNum)
     return currentImageData
   }
   return null
@@ -177,17 +224,21 @@ function knitSweaterBody (imageData) {
           opsIndex = colors.fill
         } else {
           switch (imageData.data[index]) {
-            case 63:
-              opsIndex = 1
-              break;
-            case 127:
+            case 85:
               opsIndex = 2
               break;
+            case 128:
+              opsIndex = 1
+              break;
+            case 170:
+              opsIndex = 1
+              break;
             case 255:
-              opsIndex = 3
+              opsIndex = 0
               break;
             default:
-              opsIndex = 0
+              // case 0
+              opsIndex = 3
           }
         }
         ops[opsIndex].push([leftArmWidth + (x * sWidth), neckHeight + (y * sHeight)])
@@ -300,6 +351,44 @@ function drawClip() {
 
 /**
 ★────────────────────────★
+     SELCTOR EVENTS
+★────────────────────────★
+*/
+$modeRadio.forEach(function ($el) {
+  $el.addEventListener('change', function () {
+    mode.current = this.value
+    if (this.value === 'posterize') {
+      $colorNumMenu.style.display = 'flex'
+    } else {
+      $colorNumMenu.style.display = 'none'
+    }
+    drawParts()
+    start()
+  })
+})
+
+$colorSizeSelector.addEventListener('change', function () {
+  mode.colorNum = Number(this.options[this.selectedIndex].value)
+  drawParts()
+  start()
+})
+/**
+★────────────────────────★
+      SLIDER EVENTS
+★────────────────────────★
+*/
+$brightnessSlider.addEventListener('change', function () {
+  mode.brightness = Number(this.value)
+  start()
+})
+$guageSlider.addEventListener('change', function () {
+  setSize(this.value, sts)
+  drawParts()
+  start()
+})
+
+/**
+★────────────────────────★
    COLOR PICKER EVENTS
 ★────────────────────────★
 */
@@ -390,7 +479,7 @@ $download.addEventListener('click', function() {
 ★────────────────────────★
 */
 
-// Dither image & return one bit image data
+// Dither image & return imageData
 function dither(imageData) {
   var bayermatrix = [
      [0,  128, 32,  160],
@@ -402,7 +491,7 @@ function dither(imageData) {
     for (var x = 0; x < imageData.width; x++) {
       var index = (x + (y * imageData.width)) * 4
       if(imageData.data[index + 3] !== 0) {
-        var level = imageData.data[index] > bayermatrix[y % 4][x % 4] ? 0 : 255
+        var level = imageData.data[index] > bayermatrix[y % 4][x % 4] ? 255 : 0
         imageData.data[index] = level
         imageData.data[index + 1] = level
         imageData.data[index + 2] = level
@@ -411,6 +500,54 @@ function dither(imageData) {
     }
   }
   return imageData
+}
+
+// Posterize image & return imageData
+function posterize (imgData, colorsize) {
+  // check options object & set default variables
+  colorsize = colorsize || 4
+  var pixelSize = imgData.width * imgData.height
+  var min = 255
+  var max = 0
+  for (var i = 0; i < pixelSize; i++) {
+    var index = i * 4
+    if (imgData.data[index + 3] !== 0) {
+      var value = imgData.data[index]
+      if (value < min) {
+        min = value
+      }
+      if (value>max) {
+        max = value
+      }
+    }
+  }
+  var lookupTable = new Uint8Array(256)
+  var colorWidth = (0.5 + ((max - min) / colorsize)) | 0
+  var stepSize = (0.5 + (256 / (colorsize - 1))) | 0
+  var index
+  for (var level = 0; level < colorsize; level++) {
+    for (var i = 0; i < colorWidth; i++) {
+      index = min + (colorWidth * level) + i
+      var val = level * stepSize
+      if (val > 255) {
+        val = 255
+      }
+      lookupTable[index] = val
+    }
+  }
+  for (var i = index; i < 256; i++) {
+    lookupTable[i] = 255
+  }
+
+  for (var i = 0; i < pixelSize; i++) {
+    var index = i * 4
+    imgData.data[index] = lookupTable[imgData.data[index]]
+    imgData.data[index + 1] = lookupTable[imgData.data[index + 1]]
+    imgData.data[index + 2] = lookupTable[imgData.data[index + 2]]
+    imgData.data[index + 3] = imgData.data[index + 3]
+  }
+
+  return imgData
 }
 
 function grayscale (imgData, option) {
