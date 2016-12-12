@@ -33,8 +33,8 @@
     current: 'repeat',
     brightness: 0,
     invert: false,
-    colorNum: 2,
-    repeatNum: 5,
+    colorNum: 4,
+    repeatNum: 3,
     dither: dither,
     posterize: posterize,
     repeat: posterize

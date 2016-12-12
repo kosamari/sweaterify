@@ -3,7 +3,7 @@
 'use strict'
 
 var APP_PREFIX = 'sweaterify_'
-var VERSION = 'version_09'
+var VERSION = 'version_10'
 var CACHE_NAME = APP_PREFIX + VERSION
 var URLS = [
   '/sweaterify/',
