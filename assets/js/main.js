@@ -753,7 +753,7 @@
     currentImageData
     var csvHeader = 'data:text/csv;charset=utf-8,'
     var lookupTable = {0: 0, 85: 1, 128: 2, 170: 2, 255: 3}
-    var shapes = ['#', '%', '-']
+    var shapes = ['#', '%', '●']
     shapes.splice(colors.fill, 0, '')
     var csvContent = []
 
