@@ -3,6 +3,7 @@
 }
 body {
   background-color: #f2f8ff;
+  color:#333;
 }
 h1 {
   font-size: 2.2em;
@@ -39,14 +40,14 @@ header {
   width:100px;
 }
 button {
-  font-size: 1em;
+  font-size: 0.8em;
   padding:6px;
   color: white;
   background-color: lightgray;
   box-shadow: 1px 1px #555;
   border: none;
   margin: 5px 0px;
-  // width:250px;
+  width:100px;
 }
 #color-reset {
   font-size: 0.8em;
@@ -83,9 +84,11 @@ button {
   outline: 1px dotted #000;
   outline: -webkit-focus-ring-color auto 5px;
 }
-
 a{
-  color: #55ACEE;
+  color: #4FA099;
+}
+.menu-title::before {
+  content: "● ";
 }
 #color-menu {
   display: flex;
@@ -179,5 +182,5 @@ select {
   z-index: 2;
 }
 .red {
-  color:#C60204;
+  color:#B02C2C;
 }

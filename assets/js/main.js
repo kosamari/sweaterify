@@ -7,7 +7,7 @@
  *
  */
 
-/* global localStorage, FileReader, Image, HTMLCanvasElement, atob, Blob */
+/* global localStorage, FileReader, Image, HTMLCanvasElement, atob, Blob, XMLSerializer */
 
 (function () {
   'use strict'
@@ -146,6 +146,7 @@
   var $a = document.getElementById('download-link')
   var $download = document.getElementById('download')
   var $downloadPattern = document.getElementById('download-pattern')
+  var $downloadSvg = document.getElementById('download-svg')
   var $downloadWallpaper = document.getElementById('download-wallpaper')
   var $guideTitle = document.getElementById('canvas-guide-title')
   var $guageSlider = document.getElementById('guage')
@@ -258,11 +259,13 @@
       gctx.clearRect(0, 0, $guideCanvas.width, $guideCanvas.height)
 
       $guideTitle.style.visibility = 'visible'
-      $download.style.backgroundColor = '#4FB46F'
-      $downloadPattern.style.backgroundColor = '#4FB46F'
-      $downloadWallpaper.style.backgroundColor = '#4FB46F'
+      $download.style.backgroundColor = '#4FA099'
+      $downloadPattern.style.backgroundColor = '#4FA099'
+      $downloadSvg.style.backgroundColor = '#4FA099'
+      $downloadWallpaper.style.backgroundColor = '#4FA099'
       $download.disabled = false
       $downloadPattern.disabled = false
+      $downloadSvg.disabled = false
       $downloadWallpaper.disabled = false
 
       if (!rectPos) {
@@ -373,23 +376,7 @@
           if (imageData.data[index + 3] === 0) {
             opsIndex = colors.fill
           } else {
-            switch (imageData.data[index]) {
-              case 85:
-                opsIndex = 1
-                break
-              case 128:
-                opsIndex = 2
-                break
-              case 170:
-                opsIndex = 2
-                break
-              case 255:
-                opsIndex = 3
-                break
-              default:
-              // case 0
-                opsIndex = 0
-            }
+            opsIndex = findColor(imageData.data[index])
           }
           ops[opsIndex].push([leftArmWidth + (x * sWidth), neckHeight + (y * sHeight), ctx, sWidth, sHeight, dip])
         }
@@ -410,6 +397,29 @@
         ctx.stroke()
       }
     }
+  }
+
+// find color number based on value of a pixel
+  function findColor (val) {
+    var colorNum
+    switch (val) {
+      case 85:
+        colorNum = 1
+        break
+      case 128:
+        colorNum = 2
+        break
+      case 170:
+        colorNum = 2
+        break
+      case 255:
+        colorNum = 3
+        break
+      default:
+      // case 0
+        colorNum = 0
+    }
+    return colorNum
   }
 
 // Draw each stitches
@@ -764,6 +774,24 @@
     $a.click()
   }, false)
 
+  $downloadSvg.addEventListener('click', function () {
+    var svg = makeSvg()
+    var binStr = new XMLSerializer().serializeToString(svg)
+    var len = binStr.length
+    var arr = new Uint8Array(len)
+    for (var j = 0; j < len; j++) {
+      arr[j] = binStr.charCodeAt(j)
+    }
+    var blob = new Blob([arr], {type: 'application/svg+xml'})
+    if (imageFile !== null) {
+      window.URL.revokeObjectURL(imageFile)
+    }
+    imageFile = window.URL.createObjectURL(blob)
+    $a.download = 'sweaterify.svg'
+    $a.href = imageFile
+    $a.click()
+  })
+
   $downloadWallpaper.addEventListener('click', function () {
     var cardWidth = 1920 * sf
     var cardHeight = 1200 * sf
@@ -828,6 +856,59 @@
       $a.click()
     }, 'image/png')
   }, false)
+
+/**
+★────────────────────────★
+ MAKE SVG - EXPERIMENTAL!
+★────────────────────────★
+*/
+  function makeStsPath (_x, _y) {
+    return 'M ' + (_x + 9.5) + ' ' + (_y + 10) + ' Q' + (_x + 8) + ' ' + (_y + 1.7) + ' ' + (_x + 2.7) + ' ' + (_y - 5) + ' Q' + (_x + 0.1) + ' ' + _y + ' ' + (_x + 0.2) + ' ' + (_y + 2) + ' C' + _x + ' ' + (_y + 5) + ' ' + _x + ' ' + (_y + 10) + ' ' + (_x + 1.4) + ' ' + (_y + 13) + ' Q' + (_x + 6) + ' ' + (_y + 20) + ' ' + (_x + 8.7) + ' ' + (_y + 26.7) + ' Q' + (_x + 11) + ' ' + (_y + 25) + ' ' + (_x + 9.5) + ' ' + (_y + 10) + ' M' + (_x + 10.5) + ' ' + (_y + 10) + ' Q' + (_x + 12) + ' ' + (_y + 1.7) + ' ' + (_x + 17.3) + ' ' + (_y - 5) + ' Q' + (_x + 19.9) + ' ' + _y + ' ' + (_x + 19.8) + ' ' + (_y + 2) + ' C' + (_x + 20) + ' ' + (_y + 5) + ' ' + (_x + 20) + ' ' + (_y + 10) + ' ' + (_x + 18.6) + ' ' + (_y + 13) + ' Q' + (_x + 14) + ' ' + (_y + 20) + ' ' + (_x + 11.3) + ' ' + (_y + 26.7) + ' Q' + (_x + 9.6) + ' ' + (_y + 26) + ' ' + (_x + 10.5) + ' ' + (_y + 10)
+  }
+
+  function makeSvg () {
+    var _sWidth = 20
+    var _sHeight = 20
+    var svgWidth = sts * _sWidth
+    var svgHeight = rows * _sHeight
+    var svgStrokeColor = '#000'
+    var svgNS = 'http://www.w3.org/2000/svg'
+    var svg = document.createElementNS(svgNS, 'svg')
+    svg.setAttributeNS(null, 'width', svgWidth)
+    svg.setAttributeNS(null, 'height', svgHeight)
+    svg.setAttributeNS(null, 'viewBox', '0 0 ' + svgWidth + ' ' + svgHeight)
+
+    var ops = {0: [], 1: [], 2: [], 3: []}
+    for (var y = 0; y < currentImageData.height; y++) {
+      for (var x = 0; x < currentImageData.width; x++) {
+        var index = (x + (y * currentImageData.width)) * 4
+        var opsIndex
+        if (currentImageData.data[index + 3] === 0) {
+          opsIndex = colors.fill
+        } else {
+          opsIndex = findColor(currentImageData.data[index])
+        }
+        ops[opsIndex].push([(x * _sWidth), (y * _sHeight)])
+      }
+    }
+    for (var i = 0; i < Object.keys(ops).length; i++) {
+      var g = document.createElementNS(svgNS, 'g')
+      g.setAttributeNS(null, 'fill', '#' + colors.list[i])
+      g.setAttributeNS(null, 'stroke', svgStrokeColor)
+      g.setAttributeNS(null, 'stroke-width', '0.2')
+      g.setAttributeNS(null, 'paint-order', 'stroke fill markers')
+
+      ops[i].forEach(function (arg) {
+        var d = makeStsPath.apply(null, arg)
+        var path = document.createElementNS(svgNS, 'path')
+        path.setAttributeNS(null, 'd', d)
+        g.appendChild(path)
+      })
+      svg.appendChild(g)
+    }
+
+    return svg
+  }
 
 /**
 ★────────────────────────★

@@ -37,7 +37,7 @@
         </div>
         <div id="canvas-guide-title">
           <div>
-            Drag red rectangle to change position:
+            Drag red rectangle to change position
           </div>
           <canvas id="canvas-guide"></canvas>
         </div>
@@ -57,7 +57,7 @@
           </div>
         </div>
         <div id="repeat-menu">
-          <div>Number of Repeat:</div>
+          <div class="menu-title">Number of Repeat</div>
           <select id="repeatsize">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -72,7 +72,7 @@
           </select>
         </div>
         <div id="color-num-menu">
-          <div>Number of Colors:</div>
+          <div class="menu-title">Number of Colors</div>
           <select id="colorsize">
             <option value="2">2</option>
             <option value="3">3</option>
@@ -80,11 +80,11 @@
           </select>
         </div>
         <div id="invert-menu">
-          <label for="invert">Invert image:</label>
+          <label for="invert" class="menu-title">Invert image</label>
           <input type="checkbox" id="invert" value="1">
         </div>
         <div class="slider-menu">
-          <div>Yarn Type:</div>
+          <div class="menu-title">Yarn Type</div>
           <input id="guage" type="range" min="80" max="200" step="20" value="140"/>
           <div class="slider-guide">
             <div>bulkey</div>
@@ -92,13 +92,14 @@
           </div>
         </div>
         <div class="slider-menu">
-          <div>Image Adjustment:</div>
+          <div class="menu-title">Image Adjustment</div>
           <input id="brightness" type="range" min="-254" max="254" value="0" step="10"/>
           <div class="slider-guide">
             <div>dark</div>
             <div>bright</div>
           </div>
         </div>
+        <div class="menu-title">Color Settings</div>
         <div id="color-menu">
           <div class="color-menu-item">
             <div class="color-item">
@@ -162,6 +163,7 @@
         <div>
           <button id="download" class="download-btn" disabled="true">Download Sweater PNG</button>
           <button id="download-pattern" class="download-btn"  disabled="true">Download Pattern CSV</button>
+          <button id="download-svg" class="download-btn"  disabled="true">Download SVG (experimental)</button>
           <button id="download-wallpaper" class="download-btn"  disabled="true">Download as Wallpaper</button>
         </div>
       </div>
@@ -169,7 +171,8 @@
     <a id="download-link" hidden></a>
     <img src="assets/img/patterntop.png" alt="" id="pattern-img-top" hidden>
     <img src="assets/img/patternbottom.png" alt="" id="pattern-img-bottom" hidden>
-    <script src="assets/js/main.min.js" type="text/javascript"></script>
+    <!-- <script src="assets/js/main.min.js" type="text/javascript"></script> -->
+    <script src="assets/js/main.js" type="text/javascript"></script>
     <script>
       // register ServiceWorker, remember to use absolute path!
       if (navigator.serviceWorker) {

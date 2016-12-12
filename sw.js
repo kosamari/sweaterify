@@ -1,9 +1,9 @@
-/* global self caches fetch */
+/* global self, caches, fetch */
 
 'use strict'
 
 var APP_PREFIX = 'sweaterify_'
-var VERSION = 'version_03'
+var VERSION = 'version_04'
 var CACHE_NAME = APP_PREFIX + VERSION
 var URLS = [
   '/sweaterify/',
