@@ -70,6 +70,7 @@
   var invertParam = getParameterByName('invert')
   var stsParam = Number(getParameterByName('sts'))
   var downloadModeParam = getParameterByName('downloadmode')
+  var svgDownloadParam = getParameterByName('svgdownload')
 
   if (['dither', 'posterize', 'repeat'].indexOf(modeParam) < 0) {
     modeParam = null
@@ -89,10 +90,15 @@
       }
     }
   }
-  if (invertParam !== 'false' || invertParam !== 'true') {
+  if (invertParam !== 'false' && invertParam !== 'true') {
     invertParam = null
   } else {
     invertParam = JSON.parse(invertParam)
+  }
+  if (svgDownloadParam !== 'false' && svgDownloadParam !== 'true') {
+    svgDownloadParam = null
+  } else {
+    svgDownloadParam = JSON.parse(svgDownloadParam)
   }
   if (isNaN(stsParam) || stsParam < 1) {
     stsParam = null
@@ -197,14 +203,22 @@
     $tabRepeat.checked = true
   }
 
-  setSize($guageSlider.value)
+  if (svgDownloadParam) {
+    $downloadSvg.style.display = 'inline-block'
+  }
+
+  $repeatSizeSelector.value = mode.repeatNum
+  $colorSizeSelector.value = mode.colorNum
   $color0.value = colors.list[0]
   $color1.value = colors.list[1]
   $color2.value = colors.list[2]
   $color3.value = colors.list[3]
 
+  setSize(stsParam || $guageSlider.value)
+
   if (invertParam || $invertCheck.checked) {
     mode.invert = true
+    $invertCheck.checked = true
   }
 
   $fillRadio.forEach(function (el) {
@@ -228,7 +242,6 @@
 */
 // SWEATER DRAWING
   function startRepeat () {
-    mode.repeatNum = Number($repeatSizeSelector.options[$repeatSizeSelector.selectedIndex].value)
     imgWidth = sts / mode.repeatNum
     imgHeight = imgWidth * (img.height / img.width)
     var y = (0.5 + (baseImage.height / 2) - (imgHeight / 2)) | 0
@@ -863,12 +876,12 @@
 ★────────────────────────★
 */
   function makeStsPath (_x, _y) {
-    return 'M ' + (_x + 9.5) + ' ' + (_y + 10) + ' Q' + (_x + 8) + ' ' + (_y + 1.7) + ' ' + (_x + 2.7) + ' ' + (_y - 5) + ' Q' + (_x + 0.1) + ' ' + _y + ' ' + (_x + 0.2) + ' ' + (_y + 2) + ' C' + _x + ' ' + (_y + 5) + ' ' + _x + ' ' + (_y + 10) + ' ' + (_x + 1.4) + ' ' + (_y + 13) + ' Q' + (_x + 6) + ' ' + (_y + 20) + ' ' + (_x + 8.7) + ' ' + (_y + 26.7) + ' Q' + (_x + 11) + ' ' + (_y + 25) + ' ' + (_x + 9.5) + ' ' + (_y + 10) + ' M' + (_x + 10.5) + ' ' + (_y + 10) + ' Q' + (_x + 12) + ' ' + (_y + 1.7) + ' ' + (_x + 17.3) + ' ' + (_y - 5) + ' Q' + (_x + 19.9) + ' ' + _y + ' ' + (_x + 19.8) + ' ' + (_y + 2) + ' C' + (_x + 20) + ' ' + (_y + 5) + ' ' + (_x + 20) + ' ' + (_y + 10) + ' ' + (_x + 18.6) + ' ' + (_y + 13) + ' Q' + (_x + 14) + ' ' + (_y + 20) + ' ' + (_x + 11.3) + ' ' + (_y + 26.7) + ' Q' + (_x + 9.6) + ' ' + (_y + 26) + ' ' + (_x + 10.5) + ' ' + (_y + 10)
+    return 'M ' + (_x + 0.95) + ' ' + (_y + 1) + ' Q' + (_x + 0.8) + ' ' + (_y + 0.17) + ' ' + (_x + 0.27) + ' ' + (_y - 0.5) + ' Q' + (_x + 0.01) + ' ' + _y + ' ' + (_x + 0.02) + ' ' + (_y + 0.2) + ' C' + _x + ' ' + (_y + 0.5) + ' ' + _x + ' ' + (_y + 1) + ' ' + (_x + 0.14) + ' ' + (_y + 1.3) + ' Q' + (_x + 0.6) + ' ' + (_y + 2) + ' ' + (_x + 0.87) + ' ' + (_y + 2.67) + ' Q' + (_x + 1.1) + ' ' + (_y + 2.5) + ' ' + (_x + 0.95) + ' ' + (_y + 1) + ' M' + (_x + 1.05) + ' ' + (_y + 1) + ' Q' + (_x + 1.2) + ' ' + (_y + 0.17) + ' ' + (_x + 1.73) + ' ' + (_y - 0.5) + ' Q' + (_x + 1.99) + ' ' + _y + ' ' + (_x + 1.98) + ' ' + (_y + 0.2) + ' C' + (_x + 2) + ' ' + (_y + 0.5) + ' ' + (_x + 2) + ' ' + (_y + 1) + ' ' + (_x + 1.86) + ' ' + (_y + 1.3) + ' Q' + (_x + 1.4) + ' ' + (_y + 2) + ' ' + (_x + 1.13) + ' ' + (_y + 2.67) + ' Q' + (_x + 0.96) + ' ' + (_y + 2.6) + ' ' + (_x + 1.05) + ' ' + (_y + 1)
   }
 
   function makeSvg () {
-    var _sWidth = 20
-    var _sHeight = 20
+    var _sWidth = 2
+    var _sHeight = 2
     var svgWidth = sts * _sWidth
     var svgHeight = rows * _sHeight
     var svgStrokeColor = '#000'

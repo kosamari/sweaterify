@@ -85,7 +85,7 @@
         </div>
         <div class="slider-menu">
           <div class="menu-title">Yarn Type</div>
-          <input id="guage" type="range" min="80" max="200" step="20" value="140"/>
+          <input id="guage" type="range" min="80" max="200" step="5" value="140"/>
           <div class="slider-guide">
             <div>bulkey</div>
             <div>super fine</div>
@@ -171,10 +171,8 @@
     <a id="download-link" hidden></a>
     <img src="assets/img/patterntop.png" alt="" id="pattern-img-top" hidden>
     <img src="assets/img/patternbottom.png" alt="" id="pattern-img-bottom" hidden>
-    <!-- <script src="assets/js/main.min.js" type="text/javascript"></script> -->
-    <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="assets/js/main.min.js" type="text/javascript"></script>
     <script>
-      // register ServiceWorker, remember to use absolute path!
       if (navigator.serviceWorker) {
         navigator.serviceWorker.register('/sweaterify/sw.js', {scope: '/sweaterify/'})
       }
