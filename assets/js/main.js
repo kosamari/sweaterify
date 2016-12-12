@@ -668,12 +668,12 @@
     colors.parts = Number(baseParts)
 
     $fillRadio.forEach(function (el) {
-      if (Number(el.value) === baseFill) {
+      if (el.value === baseFill) {
         el.checked = true
       }
     })
     $partsRadio.forEach(function (el) {
-      if (Number(el.value) === baseParts) {
+      if (el.value === baseParts) {
         el.checked = true
       }
     })
