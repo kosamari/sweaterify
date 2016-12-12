@@ -1,0 +1,23 @@
+{
+  "name": "sweaterify",
+  "version": "2.0.0",
+  "description": "Turn an image into a sweater!",
+  "scripts": {
+    "test": "standard",
+    "build": "uglifyjs assets/js/main.js > assets/js/main.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kosamari/sweaterify.git"
+  },
+  "author": "Mariko Kosaka (http://kosamari.com/)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kosamari/sweaterify/issues"
+  },
+  "homepage": "https://kosamari.github.io/sweaterify/",
+  "devDependencies": {
+    "standard": "^8.6.0",
+    "uglify-js": "^2.7.5"
+  }
+}

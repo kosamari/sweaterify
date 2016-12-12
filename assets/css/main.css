@@ -1,6 +1,23 @@
 *{
   font-family: sans-serif;
-  background-color: #E6F2FF;
+}
+body {
+  background-color: #f2f8ff;
+}
+h1 {
+  font-size: 2.2em;
+  padding-left: 10px;
+  text-shadow: 1px 2px 0px white;
+}
+h2 {
+  font-size:1em;
+  font-weight: normal;
+  margin-left: 20px;
+}
+header {
+  display: flex;
+  flex-direction:row;
+  align-items: baseline;
 }
 #container{
   min-width:1080px;
@@ -13,7 +30,6 @@
 }
 #sweater{
   width:780px;
-  padding-top:50px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -22,42 +38,59 @@
   border:2px solid black;
   width:100px;
 }
-.download-btn{
-  padding:10px;
-  border:2px solid black;
+button {
+  font-size: 1em;
+  padding:6px;
+  color: white;
+  background-color: lightgray;
+  box-shadow: 1px 1px #555;
+  border: none;
+  margin: 5px 0px;
+  // width:250px;
+}
+#color-reset {
+  font-size: 0.8em;
+  padding:3px;
+  width:100px;
+  background-color:#777;
 }
 #download-wallpaper {
   display: none;
 }
-.inputfile {
-  width: 0.1px;
-  height: 0.1px;
+#file {
+  width: 0px;
+  height: 0px;
   opacity: 0;
   overflow: hidden;
   position: absolute;
   z-index: -1;
 }
-.inputfile + label {
-  background-color: orange;
+#file + label {
+  width:244px;
+  font-size: 1em;
+  padding:5px;
+  color: #f3f3f3;
+  background-color: #777;
   display: inline-block;
-  padding: 7px;
-  border:2px solid black;
-
+  box-shadow: 1px 1px #555;
+  text-align: center;
 }
-.inputfile:focus + label,
-.inputfile + label:hover {
-    background-color: #FFB831;
+#file:focus + label,
+#file + label:hover {
+  opacity: 0.8;
+}
+#file:focus + label {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
 }
 
 a{
-  text-decoration: none;
+  color: #55ACEE;
 }
-
 #color-menu {
   display: flex;
   flex-direction: row;
 }
-
 .color-menu-item {
   display: flex;
   flex-direction: column;
@@ -96,7 +129,15 @@ a{
   display: none;
   flex-drection: row;
 }
+select {
+  font-size: 0.8em;
+  background-color: white;
+}
+[type=checkbox] {
+  font-size: 1em;
+}
 #invert-menu {
+  padding-top:10px;
   display: flex;
   flex-drection: row;
   align-items:center;
@@ -111,19 +152,20 @@ a{
   margin-left: 10px;
 }
 #canvas-guide-title {
+  margin-top:10px;
   visibility: hidden;
 }
 #canvas-guide {
   cursor: default;
 }
 .tabs {
-  margin-bottom:10px;
+  margin:10px 0px;
   display: flex;
   flex-drection:row;
 }
 .tab label {
   background: white;
-  border: 1px solid #4FA099;
+  border: 1px dashed #C60204;
   padding: 10px;
   margin-right: 5px;
 }
@@ -131,7 +173,11 @@ a{
   display: none;
 }
 [type=radio]:checked ~ label {
-  background: #4FA099;
-  border: 1px solid #4FA099;
+  background: #C60204;
+  border: 1px solid #C60204;
+  color:#f3f3f3;
   z-index: 2;
+}
+.red {
+  color:#C60204;
 }
