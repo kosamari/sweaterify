@@ -20,7 +20,7 @@
   var sf = window.devicePixelRatio
   var baseFill = '0'
   var baseParts = '1'
-  var baseColorset = 'C60204,DB3737,F27268,FCFCFC'
+  var baseColorset = 'C60204,B02C2C,00B36B,FCFCFC'
 
 // color picker state
   var colors = {
