@@ -31,8 +31,9 @@
     current: 'repeat',
     brightness: 0,
     invert: false,
-    colorNum: 4,
     repeatNum: 3,
+    colorNum: 4,
+    repeatColorNum: 2,
     dither: dither,
     posterize: posterize,
     repeat: posterize
@@ -204,7 +205,6 @@
   } else if (mode.current === 'repeat') {
     $repeatMenu.style.display = 'flex'
     $downloadWallpaper.style.display = 'inline-block'
-    mode.colorNum = 2
     $tabRepeat.checked = true
   }
 
@@ -266,7 +266,7 @@
     gctx.drawImage(baseImage, 0, 0, $guideCanvas.width, $guideCanvas.height)
     gctx.strokeStyle = '#C60204'
     gctx.strokeRect(rectPos.x[0] * scale, rectPos.y[0] * scale, sts * scale, rows * scale)
-    knitSweaterBody(processImage())
+    knitSweaterBody(processImage(mode.repeatColorNum))
   }
 
   function start () {
@@ -360,13 +360,14 @@
   }
 
 // CREATES IMAGE DATA
-  function processImage () {
+  function processImage (colorNum) {
+    colorNum = colorNum || mode.colorNum
     if (img.src) {
       currentImageData = mode[mode.current](
                         brightness(
                           bctx.getImageData(rectPos.x[0], rectPos.y[0], sts, rows),
                           {level: mode.brightness}
-                        ), mode.colorNum)
+                        ), colorNum)
       return currentImageData
     }
     return null
@@ -561,7 +562,6 @@
 // Posterize
   $tabPosterize.addEventListener('change', function () {
     mode.current = this.value
-    mode.colorNum = Number($colorSizeSelector.options[$colorSizeSelector.selectedIndex].value)
     $colorNumMenu.style.display = 'flex'
     $repeatMenu.style.display = 'none'
     $downloadWallpaper.style.display = 'none'
@@ -579,7 +579,6 @@
     $repeatMenu.style.display = 'flex'
     $downloadWallpaper.style.display = 'inline-block'
 
-    mode.colorNum = 2
     if (currentImageData) {
       drawParts()
       start()
@@ -823,7 +822,7 @@
       bctx.getImageData(rectPos.x[0] - left, rectPos.y[0], scaledSts, rows),
       {level: mode.brightness}
     ),
-    mode.colorNum
+    mode.repeatColorNum
   )
     var sWidth = 0.5 + (cardWidth / scaledSts) | 0
     var sHeight = 0.5 + (cardHeight / rows) | 0
