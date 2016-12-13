@@ -720,10 +720,9 @@
   $guideCanvas.addEventListener('mouseup', function (e) {
     if (mousePos) {
       mousePos = undefined
-      knitSweaterBody(processImage())
+      knitSweaterBody(processImage(mode.current === 'repeat' ? mode.repeatColorNum : mode.colorNum))
     }
   }, false)
-
 /**
 ★────────────────────────★
   DOWNLOAD BUTTON EVENT
