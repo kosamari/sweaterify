@@ -9,25 +9,35 @@ h1 {
   font-size: 2.2em;
   padding-left: 10px;
   text-shadow: 1px 2px 0px white;
+  margin:0px;
+  padding-right: 10px;
 }
 h2 {
   font-size:1em;
   font-weight: normal;
-  margin-left: 20px;
+  margin: 0px;
 }
 header {
   display: flex;
   flex-direction:row;
-  align-items: baseline;
+  align-items: center;
+  margin: 20px 0px;
 }
 #container{
   min-width:1080px;
-  margin:10px;
+  margin: 0px 10px;
   display: flex;
   flex-direction: row;
 }
 #menu{
   line-height: 1.5em;
+}
+#announcement {
+  display: flex;
+  flex-direction:row;
+  align-items:center;
+  font-size:0.7em;
+  line-height: 1.4em;
 }
 #sweater{
   width:780px;
@@ -70,7 +80,7 @@ button {
   z-index: -1;
 }
 #file + label {
-  width:244px;
+  width:300px;
   font-size: 1em;
   padding:5px;
   color: #f3f3f3;
