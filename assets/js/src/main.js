@@ -32,7 +32,7 @@
     brightness: 0,
     invert: false,
     colorNum: 4,
-    repeatNum: 2,
+    repeatNum: 3,
     dither: dither,
     posterize: posterize,
     repeat: posterize
