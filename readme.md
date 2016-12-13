@@ -1,5 +1,7 @@
 # Sweaterify
-Source code for [sweaterify](https://kosamari.github.io/sweaterify/)
+[![ugly browser christmas](https://raw.githubusercontent.com/kosamari/sweaterify/master/sad_and_offline_wallpaper/red.png "ugly browser christmas")](https://kosamari.github.io/sweaterify/)
+
+This is the source code repo for [sweaterify](https://kosamari.github.io/sweaterify/)
 
 ## FAQ
 ### Why did you make Sweaterify ?
@@ -12,6 +14,10 @@ Yes ! Once you are happy with the design, click on `Download Pattern CSV`, it wi
 
 ### Can I buy a sweater designed using Sweaterify ?
 That is extremely unlikely. It takes me about a week to make a sweater (even with the help of home-use knitting machine) which means it would cost a lot to make one. That being said, if you are working on special project & need custom knitwear produced, [please get in touch](https://twitter.com/kosamari)
+
+## Development
+- run `npm start`, a web server will start with livereload on port `3100`
+- main file for the app is `./assets/js/src/main.js` if you run `npm start` watch script to minify `./assets/js/src/main.js` to `./assets/js/main.min.js` should be running too.
 
 ## License
 Copyright 2016 Mariko Kosaka

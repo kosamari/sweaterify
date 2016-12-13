@@ -8,10 +8,8 @@
  */
 
 /* global localStorage, FileReader, Image, HTMLCanvasElement, atob, Blob, XMLSerializer */
-
 (function () {
   'use strict'
-
 /**
 ★────────────────────────★
       BASE SETTINGS
@@ -34,7 +32,7 @@
     brightness: 0,
     invert: false,
     colorNum: 4,
-    repeatNum: 3,
+    repeatNum: 2,
     dither: dither,
     posterize: posterize,
     repeat: posterize
@@ -72,9 +70,16 @@
   var downloadModeParam = getParameterByName('downloadmode')
   var svgDownloadParam = getParameterByName('svgdownload')
 
-  if (['dither', 'posterize', 'repeat'].indexOf(modeParam) < 0) {
-    modeParam = null
+  var modemap = {
+    dither: 'dither',
+    posterize: 'posterize',
+    repeat: 'repeat',
+    halftone: 'dither',
+    poster: 'posterize',
+    holiday: 'repeat'
   }
+  modeParam = modemap[modeParam]
+
   if (repeatNumParam < 0) {
     repeatNumParam = null
   }
@@ -187,8 +192,8 @@
 ★────────────────────────★
 */
   mode.brightness = Number($brightnessSlider.value)
-  mode.colorNum = Number(colorNumParam || $colorSizeSelector.options[$colorSizeSelector.selectedIndex].value)
-  mode.repeatNum = Number(repeatNumParam || $repeatSizeSelector.options[$repeatSizeSelector.selectedIndex].value)
+  mode.colorNum = Number(colorNumParam) || mode.colorNum
+  mode.repeatNum = Number(repeatNumParam) || mode.repeatNum
   mode.current = modeParam || mode.current
 
   if (mode.current === 'dither') {
